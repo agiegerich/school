@@ -1,10 +1,16 @@
 import sys
-import cipher_utils
+
+def remove_non_alpha(text):
+    return ''.join([c for c in text if c.isalpha() or c == ' '])
+
+def print_usage(program_name):
+    print('USAGE: python3', program_name, 'TEXT_FILE KEY OUTPUT_FILE')
 
 def permutation_cipher(plaintext, key):
     # form a list of integer key digits and subtract 1 from them all to make the 0 indexable
     processed_key = [int(c) - 1 for c in key]
 
+    # get rid of all spaces but save their location
     space_indices = []
     for i,c in enumerate(plaintext):
         if c == ' ': space_indices.append(i)
@@ -29,16 +35,23 @@ def permutation_cipher(plaintext, key):
             cipherchunk += chunk[permutation_val]
         ciphertext += cipherchunk
 
+    # add spaces back in their original locations
+    cipherchar_list = list(ciphertext)
+    for i in space_indices:
+      cipherchar_list.insert(i, ' ')
+
+    ciphertext = ''.join(cipherchar_list)
+
     return ciphertext
 
 if len(sys.argv) < 4 or len(sys.argv) > 4:
-    cipher_utils.print_usage(sys.argv[0])
+    print_usage(sys.argv[0])
     sys.exit()
 
 text = open(sys.argv[1], 'r').read()
 text = text.replace('\n', ' ')
 # remove punctuation and edge whitespace, make lowercase
-text = cipher_utils.remove_non_alpha(text).lower().strip()
+text = remove_non_alpha(text).lower().strip()
 
 key = sys.argv[2]
 output_file = open(sys.argv[3], 'w')
@@ -51,7 +64,6 @@ if not key.isnumeric():
     print('Key must be composed of digits 1,2,...,key_length in any order')
     sys.exit()
 
-
 for char in key:
     if int(char) > len(key):
         print('Key must be composed of digits 1,2,...,key_length in any order')
@@ -61,5 +73,18 @@ if len(set([char for char in key])) < len(key):
     print('Key must be composed of digits 1,2,...,key_length in any order')
     sys.exit()
 
+# remember: end_letters is setpci
+'''
+assert permutation_cipher('abcdef', '123') == 'abcdef'
+assert permutation_cipher('abcdefg', '123') == 'abcdefgse'
+assert permutation_cipher('abcdefgh', '123') == 'abcdefghs'
+assert permutation_cipher('abcdef', '321')  == 'cbafed'
+assert permutation_cipher('a b c d e f', '321') == 'c b a f e d'
+assert permutation_cipher('abc defgh', '4321') == 'dcb ahgfe'
+assert permutation_cipher('abc def', '4321') == 'dcb aesfe'
+assert permutation_cipher('abc de', '4321') == 'dcb atese'
+'''
+
+text = text.replace(' ', '')
 ciphertext = permutation_cipher(text, key)
 output_file.write(ciphertext)

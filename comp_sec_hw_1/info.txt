@@ -1,0 +1,28 @@
+Permutation cipher algorithm: Splits plaintext into chunks that are the size of the provided key,
+                              rearranges these chunks in place according to the key, and joins the
+                              chunks back together to get the ciphertext.
+
+Vigener cipher algorithm:     Uses n Caesar ciphers to encrypt the plaintext where n is the length
+                              of the key. The first letter of each Caesar cipher corresponds to a
+                              letter in the key so if the key is 'abc' then the first Caesar cipher
+                              is [a, b, c, ..., z] the second is [b, c, d, ..., a] and the third is
+                              [c, d, e, ..., b]. For the ith letter of the plaintext the
+                              ((i mod n) + 1)th Caesar cipher is applied to form the ciphertext.
+
+
+Permutation cipher key used: 435216
+Vigener cipher key used: spagett
+
+The extra permutation cipher letters are hardcoded as 'setpci' so 'a' encrypted with the key '1234567' is 'asetpci'
+
+Usage: Use python3 (tested with python3.3 and python3.4)
+
+       python3 permutation_cipher.py PLAINTEXT_FILE KEY OUTPUT_FILE  
+
+       python3 vigener_cipher.py PLAINTEXT_FILE KEY OUTPUT_FILE
+
+So for the files I included...
+
+       python3 permutation_cipher.py part1_plaintext.txt 435216 part1_perm_ciphertext.txt
+
+       python3 vigener_cipher.py part1_plaintext.txt spagett part1_vig_ciphertext.txt
